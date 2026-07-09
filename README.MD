@@ -6,7 +6,7 @@ Understanding deep learning by implementing neural networks from scratch and com
 
 This repository explores the foundations of deep learning through two complementary projects.
 
-**Project 1** implements a fully connected neural network entirely from scratch using only NumPy — forward propagation, backpropagation, mini-batch gradient descent, and hyperparameter tuning — with no autograd, no framework shortcuts.
+**Project 1** implements a fully connected neural network entirely from scratch using only NumPy - forward propagation, backpropagation, mini-batch gradient descent, and hyperparameter tuning with no autograd, no framework shortcuts.
 
 **Project 2** compares a CNN trained from scratch against transfer learning with a pretrained feature extractor, quantifying the real-world trade-off between training a model end-to-end and fine-tuning an existing one.
 
@@ -50,19 +50,19 @@ F1 score scales sharply with hidden units on this task — from ~0.01 at 1 unit 
 
 <img src="assets/network_depth_vs_f1.png" width="600">
 
-This is the most interesting result in the repo: stacking more sigmoid layers *without* adjusting the training setup collapses performance from ~0.70 F1 at one hidden layer to **0** at three or more layers — a textbook demonstration of the vanishing gradient problem. Deeper isn't automatically better; it's actively worse without the right activation/initialization choices.
+This is the most interesting result in the repo: stacking more sigmoid layers *without* adjusting the training setup collapses performance from ~0.70 F1 at one hidden layer to **0** at three or more layers, a textbook demonstration of the vanishing gradient problem. Deeper isn't automatically better; it's actively worse without the right activation/initialization choices.
 
 **Effect of network depth — ReLU (Part D)**
 
 <img src="assets/network_depth_vs_f1_relu.png" width="600">
 
-Swapping sigmoid for ReLU removes the collapse entirely. F1 improves from ~0.86 to ~0.88 as depth increases from 1 to 3 layers, before mildly tapering at 4 layers — the difference between a network that trains and one that doesn't comes down to a single activation function.
+Swapping sigmoid for ReLU removes the collapse entirely. F1 improves from ~0.86 to ~0.88 as depth increases from 1 to 3 layers, before mildly tapering at 4 layers, the difference between a network that trains and one that doesn't comes down to a single activation function.
 
 **Comparison against Scikit-learn's MLPClassifier**
 
 <img src="assets/mlp_classifier_f1.png" width="600">
 
-Comparing this from-scratch implementation against `sklearn`'s MLP across the same architectures: test F1 starts around 0.97 for a single hidden layer and gradually declines as more layers are added, consistent with the depth findings above — deeper, wider architectures need more careful tuning to actually outperform simpler ones.
+Comparing this from-scratch implementation against `sklearn`'s MLP across the same architectures: test F1 starts around 0.97 for a single hidden layer and gradually declines as more layers are added, consistent with the depth findings above deeper, wider architectures need more careful tuning to actually outperform simpler ones.
 
 ### Key Findings — Project 1
 
@@ -87,7 +87,7 @@ Two approaches to the same image classification task, evaluated on identical dat
 
 <img src="assets/scratch_vs_transfer.png" width="700">
 
-Over 20 epochs, the transfer learning model reaches ~95% train F1 by epoch 2 — the from-scratch model takes until epoch 7 to cross that mark. Both models converge to a similar final test F1 (~0.965–0.968), so on this dataset the from-scratch CNN eventually catches up in accuracy — but transfer learning gets there in roughly a third of the epochs, which is the more realistic advantage in practice: less compute, less wall-clock time, same ceiling.
+Over 20 epochs, the transfer learning model reaches ~95% train F1 by epoch 2, the from-scratch model takes until epoch 7 to cross that mark. Both models converge to a similar final test F1 (~0.965–0.968), so on this dataset the from-scratch CNN eventually catches up in accuracy — but transfer learning gets there in roughly a third of the epochs, which is the more realistic advantage in practice: less compute, less wall-clock time, same ceiling.
 
 ### Key Findings — Project 2
 
@@ -99,9 +99,8 @@ Over 20 epochs, the transfer learning model reaches ~95% train F1 by epoch 2 —
 
 ## Combined Takeaways
 
-- Implementing backpropagation and gradient descent manually surfaces failure modes (like vanishing gradients) that are invisible when using high-level frameworks — you only really understand *why* ReLU replaced sigmoid after watching sigmoid fail.
-- Transfer learning's main advantage here isn't a better ceiling — it's speed to get there.
-- Architecture choices (depth, width, activation) interact in ways that aren't obvious in isolation; the depth results only make sense once you compare sigmoid against ReLU side by side.
+- Implementing backpropagation and gradient descent manually surfaces failure modes (like vanishing gradients) that are invisible when using high-level frameworks, you only really understand *why* ReLU replaced sigmoid after watching sigmoid fail.
+- Transfer learning's main advantage here isn't a better ceiling, it's speed to get there.
 
 ## Technologies Used
 
@@ -109,7 +108,3 @@ Over 20 epochs, the transfer learning model reaches ~95% train F1 by epoch 2 —
 - NumPy
 - Matplotlib
 - Scikit-learn
-
-## License
-
-MIT License
