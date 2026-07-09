@@ -48,13 +48,13 @@ Together, these projects demonstrate both the mathematical foundations of deep l
 
 ## Architecture
 
-![alt text](image-1.png)
+![alt text](assets/image-1.png)
 
 ---
 
 ## Training Pipeline
 
-![alt text](image-2.png)
+![alt text](assets/image-2.png)
 
 ## Experiments
 
