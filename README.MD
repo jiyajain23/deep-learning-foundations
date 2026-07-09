@@ -1,25 +1,20 @@
-
 # Deep Learning Foundations
 
-> **Understanding deep learning by implementing neural networks from scratch and comparing them with modern transfer learning techniques.**
-
-
+Understanding deep learning by implementing neural networks from scratch and comparing them with modern transfer learning techniques.
 
 ## Overview
 
 This repository explores the foundations of deep learning through two complementary projects.
 
-The first project implements a fully connected neural network from scratch using only **NumPy**, covering every stage of the learning process including forward propagation, backpropagation, gradient descent, and hyperparameter tuning.
+**Project 1** implements a fully connected neural network entirely from scratch using only NumPy — forward propagation, backpropagation, mini-batch gradient descent, and hyperparameter tuning — with no autograd, no framework shortcuts.
 
-The second project compares training a convolutional neural network from scratch with transfer learning, highlighting the advantages of pretrained feature extractors in computer vision tasks.
+**Project 2** compares a CNN trained from scratch against transfer learning with a pretrained feature extractor, quantifying the real-world trade-off between training a model end-to-end and fine-tuning an existing one.
 
-Together, these projects demonstrate both the mathematical foundations of deep learning and their practical applications.
-
----
+Together, they cover both the math underneath deep learning and how that math plays out in practice.
 
 ## Repository Structure
 
-```text
+```
 .
 ├── notebooks/
 ├── src/
@@ -30,122 +25,91 @@ Together, these projects demonstrate both the mathematical foundations of deep l
 
 ---
 
-# Project 1 — Neural Network from Scratch
+## Project 1 — Neural Network from Scratch
 
 ### Features
 
-* Neural network implemented entirely in NumPy
-* Configurable hidden layers
-* ReLU and Sigmoid activation functions
-* Softmax output layer
-* Backpropagation
-* Mini-batch Gradient Descent
-* Early stopping
-* Hyperparameter analysis
-* Comparison with Scikit-learn MLP
+- Neural network implemented entirely in NumPy (no PyTorch/TensorFlow)
+- Configurable hidden layer width and depth
+- ReLU and Sigmoid activation functions
+- Softmax output layer
+- Manually implemented backpropagation
+- Mini-batch gradient descent with early stopping
+- Systematic hyperparameter analysis
+- Benchmarked against Scikit-learn's `MLPClassifier`
+
+### Experiments
+
+**Effect of hidden layer width (Part B)**
+
+<img src="assets/hidden_units_vs_f1.png" width="600">
+
+F1 score scales sharply with hidden units on this task — from ~0.01 at 1 unit to ~0.70 at 100 units — with most of the gain happening between 5 and 50 units. Beyond 50 units, returns flatten out, showing the network is capacity-limited at the low end but not gaining much from further width alone.
+
+**Effect of network depth — Sigmoid (Part C)**
+
+<img src="assets/network_depth_vs_f1.png" width="600">
+
+This is the most interesting result in the repo: stacking more sigmoid layers *without* adjusting the training setup collapses performance from ~0.70 F1 at one hidden layer to **0** at three or more layers — a textbook demonstration of the vanishing gradient problem. Deeper isn't automatically better; it's actively worse without the right activation/initialization choices.
+
+**Effect of network depth — ReLU (Part D)**
+
+<img src="assets/network_depth_vs_f1_relu.png" width="600">
+
+Swapping sigmoid for ReLU removes the collapse entirely. F1 improves from ~0.86 to ~0.88 as depth increases from 1 to 3 layers, before mildly tapering at 4 layers — the difference between a network that trains and one that doesn't comes down to a single activation function.
+
+**Comparison against Scikit-learn's MLPClassifier**
+
+<img src="assets/mlp_classifier_f1.png" width="600">
+
+Comparing this from-scratch implementation against `sklearn`'s MLP across the same architectures: test F1 starts around 0.97 for a single hidden layer and gradually declines as more layers are added, consistent with the depth findings above — deeper, wider architectures need more careful tuning to actually outperform simpler ones.
+
+### Key Findings — Project 1
+
+- Vanishing gradients are not a theoretical concern — they visibly destroy performance in a plain sigmoid network beyond 2 hidden layers.
+- ReLU alone recovers stable training at the same depths where sigmoid collapses.
+- More hidden units help up to a point, then plateau — width isn't a free lunch either.
 
 ---
 
-## Architecture
+## Project 2 — Transfer Learning vs. Training from Scratch
 
-![alt text](assets/image.png)
+Two approaches to the same image classification task, evaluated on identical data splits:
 
----
+- **Model A** — CNN trained completely from scratch
+- **Model B** — Transfer learning using a pretrained convolutional feature extractor
 
-## Training Pipeline
+### Training Curves
 
-![alt text](assets/image-1.png)
+<img src="assets/scratch_training_curve.png" width="500"> <img src="assets/transfer_learning_training_curve.png" width="500">
 
-## Experiments
+### Scratch vs. Transfer Learning
 
-The following experiments were conducted.
+<img src="assets/scratch_vs_transfer.png" width="700">
 
-* Effect of hidden layer width
-* Effect of network depth
-* Performance evaluation using Precision, Recall and F1-score
-* Comparison against Scikit-learn's implementation
+Over 20 epochs, the transfer learning model reaches ~95% train F1 by epoch 2 — the from-scratch model takes until epoch 7 to cross that mark. Both models converge to a similar final test F1 (~0.965–0.968), so on this dataset the from-scratch CNN eventually catches up in accuracy — but transfer learning gets there in roughly a third of the epochs, which is the more realistic advantage in practice: less compute, less wall-clock time, same ceiling.
 
----
+### Key Findings — Project 2
 
-## Results
-
-Include
-
-```
-Hidden Units vs F1
-
-Network Depth vs F1
-```
+- Transfer learning converges dramatically faster (by ~5x fewer epochs to reach comparable train F1).
+- Final test performance between the two approaches ends up close, but the scratch model needs substantially more training time to get there.
+- The gap between train and test F1 (~3 points) is consistent across both models, suggesting similar generalization behavior rather than transfer learning simply overfitting less.
 
 ---
 
-# Project 2 — Transfer Learning vs Training from Scratch
+## Combined Takeaways
 
-This project compares two different approaches for image classification.
+- Implementing backpropagation and gradient descent manually surfaces failure modes (like vanishing gradients) that are invisible when using high-level frameworks — you only really understand *why* ReLU replaced sigmoid after watching sigmoid fail.
+- Transfer learning's main advantage here isn't a better ceiling — it's speed to get there.
+- Architecture choices (depth, width, activation) interact in ways that aren't obvious in isolation; the depth results only make sense once you compare sigmoid against ReLU side by side.
 
-### Model A
+## Technologies Used
 
-CNN trained completely from scratch.
+- Python
+- NumPy
+- Matplotlib
+- Scikit-learn
 
-### Model B
-
-Transfer learning using a pretrained convolutional neural network.
-
-Both models are evaluated on the same dataset to compare
-
-* convergence speed
-* generalization
-* classification performance
-* training efficiency
-
----
-
-## Comparison
-
-Include
-
-```
-Training Curves
-
-Scratch vs Transfer Learning
-
-Confusion Matrix
-```
-
----
-
-# Key Findings
-
-* Transfer learning converges significantly faster than training from scratch.
-* Increasing hidden units improves performance only up to a certain point.
-* Increasing network depth without appropriate optimization may reduce performance.
-* Implementing backpropagation manually provides valuable insight into how neural networks learn.
-
----
-
-# Technologies Used
-
-* Python
-* NumPy
-* Matplotlib
-* Scikit-learn
-
-# Repository Highlights
-
-✔ Neural Network implemented from scratch
-
-✔ Backpropagation implementation
-
-✔ Hyperparameter analysis
-
-✔ Transfer Learning
-
-✔ Computer Vision
-
-✔ Educational visualizations
-
----
-
-# License
+## License
 
 MIT License
