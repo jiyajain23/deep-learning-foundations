@@ -75,6 +75,7 @@ Swapping sigmoid for ReLU removes the collapse entirely. F1 improves from ~0.86 
 Comparing this from-scratch implementation against `sklearn`'s MLP across the same architectures: test F1 starts around 0.97 for a single hidden layer and gradually declines as more layers are added, consistent with the depth findings above deeper, wider architectures need more careful tuning to actually outperform simpler ones.
 
 ### Key Findings — Project 1
+ LIVE DEMO for consonants: https://devanagari-images-prediction.streamlit.app/
 
 - Vanishing gradients are not a theoretical concern — they visibly destroy performance in a plain sigmoid network beyond 2 hidden layers.
 - ReLU alone recovers stable training at the same depths where sigmoid collapses.
