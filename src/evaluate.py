@@ -76,6 +76,16 @@ def _load_model_and_classes(
     data_dir: str | None = None,
 ) -> tuple[Any, list[str]]:
     """Deserialize model from a pickle file and resolve class names."""
+    import __main__
+    from src.generic_neural_network import (
+        GenericNeuralNetwork, relu, relu_deriv, sigmoid, sigmoid_deriv
+    )
+    
+    # Notebook compatibility hack: the notebook pickled these objects as part of __main__
+    for obj in (GenericNeuralNetwork, relu, relu_deriv, sigmoid, sigmoid_deriv):
+        if not hasattr(__main__, obj.__name__):
+            setattr(__main__, obj.__name__, obj)
+
     try:
         with open(model_path, "rb") as fh:
             payload = pickle.load(fh)
@@ -106,14 +116,27 @@ def _load_model_and_classes(
                 n_classes = len(model.classes_)
             except AttributeError:
                 n_classes = 0
-        class_names = [f"class_{i}" for i in range(n_classes)]
-        warnings.warn(
-            f"No real class names found for {model_path!r}. "
-            f"Using generic placeholder labels (class_0 … class_{n_classes - 1}). "
-            "Pass --data-dir to resolve actual class names.",
-            UserWarning,
-            stacklevel=2,
-        )
+                
+        # Devanagari fallback if exactly 36 classes
+        if n_classes == 36:
+            class_names = [
+                "क (ka)", "ख (kha)", "ग (ga)", "घ (gha)", "ङ (nga)",
+                "च (cha)", "छ (chha)", "ज (ja)", "झ (jha)", "ञ (nya)",
+                "ट (ta)", "ठ (tha)", "ड (da)", "ढ (dha)", "ण (na)",
+                "त (ta)", "थ (tha)", "द (da)", "ध (dha)", "न (na)",
+                "प (pa)", "फ (pha)", "ब (ba)", "भ (bha)", "म (ma)",
+                "य (ya)", "र (ra)", "ल (la)", "व (va)", "श (sha)",
+                "ष (shaa)", "स (sa)", "ह (ha)", "क्ष (ksha)", "त्र (tra)", "ज्ञ (gya)"
+            ]
+        else:
+            class_names = [f"class_{i}" for i in range(n_classes)]
+            warnings.warn(
+                f"No real class names found for {model_path!r}. "
+                f"Using generic placeholder labels (class_0 … class_{n_classes - 1}). "
+                "Pass --data-dir to resolve actual class names.",
+                UserWarning,
+                stacklevel=2,
+            )
 
     return model, class_names
 
