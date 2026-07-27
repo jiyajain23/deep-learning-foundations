@@ -16,11 +16,20 @@ Together, they cover both the math underneath deep learning and how that math pl
 
 ```
 .
-├── notebooks/
-├── src/
-├── assets/
-├── README.md
-└── requirements.txt
+├── notebooks/                        # Original Jupyter experiment notebooks
+│   ├── 01_neural_network_from_scratch.ipynb
+│   └── 02_transferLearning_vs_scratch.ipynb
+├── src/                              # Importable Python modules
+│   ├── generic_neural_network.py     # NumPy neural network (forward, backward, train)
+│   ├── data_utils.py                 # Image loading and preprocessing
+│   ├── experiments.py                # CLI entry-point for all experiment sweeps
+│   └── evaluate.py                   # Single-image inference script
+├── model/
+│   └── pretrained_consonant_model.pkl  # Pretrained 36-class consonant model
+├── assets/                           # Experiment plots
+├── app.py                            # Streamlit interactive demo
+├── requirements.txt
+└── .gitignore
 ```
 
 ---
@@ -32,10 +41,11 @@ Together, they cover both the math underneath deep learning and how that math pl
 - Neural network implemented entirely in NumPy (no PyTorch/TensorFlow)
 - Configurable hidden layer width and depth
 - ReLU and Sigmoid activation functions
-- Softmax output layer
+- Softmax output layer with cross-entropy loss
 - Manually implemented backpropagation
 - Mini-batch gradient descent with early stopping
-- Systematic hyperparameter analysis
+- **Optional L2 weight regularization** (`l2_lambda` parameter)
+- Systematic hyperparameter analysis (width, depth, activation function)
 - Benchmarked against Scikit-learn's `MLPClassifier`
 
 ### Experiments
@@ -97,6 +107,44 @@ Over 20 epochs, the transfer learning model reaches ~95% train F1 by epoch 2, th
 
 ---
 
+## Running Experiments from the Command Line
+
+All notebook experiment loops are available as a CLI via `src/experiments.py`.
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run all experiments (hidden units, depth, activation, MLP baseline)
+python src/experiments.py all --train-dir data/train --test-dir data/test
+
+# Run only the scratch vs. transfer learning comparison (Notebook 02)
+python src/experiments.py transfer \
+    --train-dir data/train_digits \
+    --test-dir  data/test_digits  \
+    --pretrained-model model/pretrained_consonant_model.pkl --epochs 20
+```
+
+## Single-Image Inference
+
+```bash
+# Predict the class of a single image from the command line
+python src/evaluate.py model/pretrained_consonant_model.pkl path/to/image.png
+
+# Show the top-5 probabilities
+python src/evaluate.py model/pretrained_consonant_model.pkl path/to/image.png --show-probs --top-k 5
+```
+
+## Interactive Web App
+
+An interactive Streamlit demo lets you **draw** a Devanagari character or **upload an image** and see the model's confidence distribution in real time.
+
+```bash
+streamlit run app.py
+```
+
+---
+
 ## Combined Takeaways
 
 - Implementing backpropagation and gradient descent manually surfaces failure modes (like vanishing gradients) that are invisible when using high-level frameworks, you only really understand *why* ReLU replaced sigmoid after watching sigmoid fail.
@@ -104,7 +152,9 @@ Over 20 epochs, the transfer learning model reaches ~95% train F1 by epoch 2, th
 
 ## Technologies Used
 
-- Python
+- Python 3.10+
 - NumPy
-- Matplotlib
+- Pillow
+- Matplotlib / Seaborn
 - Scikit-learn
+- Streamlit (interactive demo)
