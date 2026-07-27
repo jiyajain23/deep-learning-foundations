@@ -1,0 +1,10 @@
+# Core
+numpy>=1.24
+Pillow>=9.0
+
+# ML / evaluation
+scikit-learn>=1.3
+
+# Visualisation (optional — only needed for experiment plots)
+matplotlib>=3.7
+seaborn>=0.12
