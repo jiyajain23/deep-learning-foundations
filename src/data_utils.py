@@ -40,24 +40,13 @@ def load_devanagari_data(
 
     Each image is:
 
-    1. Opened with Pillow and converted to **grayscale** (``'L'`` mode).
-    2. Resized to ``(img_width, img_height)`` pixels.
-    3. Flattened to a 1-D vector of length ``img_height * img_width``.
-    4. Normalised to the ``[0, 1]`` range by dividing by 255.
-
-    Parameters
-    data_dir:
-        Path to the root directory containing one sub-directory per class.
-    img_height:
-        Height (in pixels) to which every image is resized.  Defaults to 32.
-    img_width:
-        Width (in pixels) to which every image is resized.  Defaults to 32.
+    1. Resized to (img_width, img_height) pixels.
+    2. Flattened to a 1-D vector of length ``img_height * img_width``.
+    3. Normalised to the ``[0, 1]`` range by dividing by 255.
 
     Returns
     X : NDArray[np.floating]
-        Feature matrix of shape ``(img_height * img_width, m)`` where *m* is
-        the total number of successfully loaded images.  Each column is one
-        flattened, normalised image.
+        Feature matrix of shape ``(img_height * img_width, m)``
     Y_one_hot : NDArray[np.floating]
         One-hot label matrix of shape ``(num_classes, m)``.
         ``Y_one_hot[c, i] == 1`` iff sample *i* belongs to class *c*.
